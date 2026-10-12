@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Petualangan Algoritma — Mobile Legends Edition</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ===== VARIABEL TEMA MOBILE LEGENDS ===== */
+    :root {
+      --bg-dark: #060913;
+      --bg-panel: rgba(15, 23, 42, 0.95);
+      --gold: #f59e0b;
+      --gold-light: #fbbf24;
+      --gold-glow: rgba(245, 158, 11, 0.4);
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.4);
+      --red: #ef4444;
+      --green: #10b981;
+      --purple: #8b5cf6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-title: 'Cinzel', serif;
+      --font-body: 'Poppins', sans-serif;
+    }
+
+    /* ===== FITUR ANTI-CHEAT (CSS) ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none; /* Mencegah seleksi & copy teks */
+      -webkit-touch-callout: none;
+    }
+
+    input, textarea {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important; /* Mengizinkan murid mengetik di kolom jawaban */
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 60%),
+        radial-gradient(circle at 80% 100%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+        linear-gradient(180deg, #060913 0%, #0f172a 100%);
+      background-attachment: fixed;
+      font-family: var(--font-body);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 12px;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding-bottom: 40px;
+    }
+
+    /* ===== HEADER GLOBAL ===== */
+    .game-header {
+      text-align: center;
+      padding: 16px;
+      background: var(--bg-panel);
+      border: 2px solid var(--gold);
+      border-radius: 16px;
+      box-shadow: 0 0 25px var(--gold-glow);
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .game-header h1 {
+      font-family: var(--font-title);
+      font-size: 22px;
+      color: var(--gold-light);
+      text-shadow: 0 0 12px var(--gold-glow);
+      letter-spacing: 1px;
+    }
+    .game-header p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .squad-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 14px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--gold);
+      border-radius: 20px;
+      color: var(--gold-light);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .btn-ml {
+      display: block;
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+      color: #0f172a;
+      font-family: var(--font-title);
+      font-weight: 800;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: 2px solid #fef08a;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px var(--gold-glow);
+      transition: all 0.2s ease;
+      text-align: center;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    .btn-ml:active {
+      transform: scale(0.97);
+      box-shadow: 0 2px 10px var(--gold-glow);
+    }
+    .btn-secondary {
+      background: linear-gradient(180deg, #334155 0%, #1e293b 100%);
+      color: var(--text);
+      border-color: #64748b;
+      box-shadow: none;
+      text-shadow: none;
+    }
+
+    /* ===== LAYAR / PANELS ===== */
+    .screen {
+      display: none;
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .screen.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .welcome-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 28px 20px;
+      text-align: center;
+      box-shadow: 0 0 35px var(--gold-glow);
+    }
+    .welcome-icon {
+      font-size: 64px;
+      margin-bottom: 12px;
+      filter: drop-shadow(0 0 15px var(--gold));
+    }
+    .welcome-title {
+      font-family: var(--font-title);
+      font-size: 26px;
+      color: var(--gold-light);
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .welcome-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+      text-align: justify;
+      text-justify: inter-word;
+      background: rgba(30, 41, 59, 0.6);
+      padding: 16px;
+      border-radius: 12px;
+      border-left: 4px solid var(--gold);
+    }
+
+    .reg-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--cyan);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 30px var(--cyan-glow);
+    }
+    .reg-title {
+      font-family: var(--font-title);
+      font-size: 20px;
+      color: var(--cyan);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input[type="text"], select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: #0f172a;
+      border: 2px solid #334155;
+      border-radius: 10px;
+      color: #ffffff;
+      font-family: var(--font-body);
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    input[type="text"]:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 12px var(--cyan-glow);
+    }
+    .member-box {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .member-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .member-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 8px;
+    }
+
+    .map-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    @media (min-width: 500px) {
+      .map-container { grid-template-columns: repeat(3, 1fr); }
+    }
+    .pos-card {
+      background: var(--bg-panel);
+      border: 2px solid #334155;
+      border-radius: 14px;
+      padding: 16px 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .pos-card.locked {
+      border-color: #475569;
+      opacity: 0.8;
+      background: rgba(15, 23, 42, 0.6);
+    }
+    .pos-card.unlocked {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px var(--cyan-glow);
+      background: rgba(6, 182, 212, 0.1);
+    }
+    .pos-card.completed {
+      border-color: var(--green);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.1);
+    }
+    .pos-icon {
+      font-size: 32px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .pos-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .pos-status {
+      font-size: 10px;
+      margin-top: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-locked { color: #94a3b8; }
+    .status-unlocked { color: var(--cyan); }
+    .status-completed { color: var(--green); }
+
+    .pos-detail-card {
+      background: var(--bg-panel);
+      border: 2px solid var(--gold);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+    .pos-detail-header {
+      border-bottom: 2px solid #334155;
+      padding-bottom: 12px;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+    .pos-detail-header h2 {
+      font-family: var(--font-title);
+      font-size: 20px;
+      color: var(--gold-light);
+    }
+    .question-block {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .question-block label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: #e2e8f0;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .reference-box {
+      background: rgba(245, 158, 11, 0.1);
+      border-left: 4px solid var(--gold);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #fef08a;
+      white-space: pre-line;
+      line-height: 1.5;
+    }
+
+    /* POP-UP MODALS & OVERLAYS */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(3, 7, 18, 0.9);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--bg-panel);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 24px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 0 40px var(--gold-glow);
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-box h3 {
+      font-family: var(--font-title);
+      color: var(--gold-light);
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .modal-box p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .modal-box input {
+      text-align: center;
+      font-size: 18px;
+      letter-spacing: 3px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 18px;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .victory-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(3, 7, 18, 0.95);
+      z-index: 2000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .victory-banner {
+      font-family: var(--font-title);
+      font-size: 56px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbbf24 40%, #b45309 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.8));
+      transform: scale(0.5);
+      animation: victoryZoom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes victoryZoom {
+      to { transform: scale(1); }
+    }
+    .victory-sub {
+      color: var(--cyan);
+      font-family: var(--font-title);
+      font-size: 18px;
+      margin-top: 10px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 10px var(--cyan-glow);
+    }
+
+    .cheat-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(185, 28, 28, 0.98);
+      z-index: 9999;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      color: white;
+    }
+    .cheat-overlay h2 {
+      font-family: var(--font-title);
+      font-size: 32px;
+      margin-bottom: 12px;
+      text-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    .cheat-overlay p {
+      font-size: 15px;
+      max-width: 480px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .hero-team-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+      justify-content: center;
+    }
+    .hero-tag {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--cyan);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      color: var(--cyan);
+    }
+
+    /* CETAK / PRINT STYLES */
+    #printSection { display: none; }
+    @media print {
+      body * { visibility: hidden; }
+      #printSection, #printSection * { visibility: visible; color: #000 !important; }
+      #printSection {
+        display: block;
+        position: absolute;
+        left: 0; top: 0; width: 100%;
+        background: white;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+      }
+      .print-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+      .print-box { border: 1px solid #666; padding: 10px; border-radius: 6px; margin-top: 4px; min-height: 40px; white-space: pre-wrap; font-size: 12px; }
+      .print-q { margin-top: 12px; font-weight: bold; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- GLOBAL HEADER SQUAD (MUNCUL JIKA SUDAH REGISTRASI) -->
+    <div class="game-header" id="globalHeader" style="display: none;">
+      <h1>PETUALANGAN ALGORITMA</h1>
+      <p>Misi Investigasi Informatika — Fase E</p>
+      <div class="squad-badge" id="squadBadgeName">Squad: -</div>
+    </div>
+
+    <!-- ================= HALAMAN 1: WELCOME ================= -->
+    <div id="screen-welcome" class="screen active">
+      <div class="welcome-card">
+        <div class="welcome-icon">⚔️</div>
+        <div class="welcome-title">SELAMAT DATANG<br>PETUALANG ALGORITMA</div>
+        <div class="welcome-text">
+          Halo Para Detektif & Hero Algoritma Hebat! Kalian dipanggil untuk menjalankan sebuah <strong>Misi Investigasi Serius</strong> di Land of Logic. 
+          <br><br>
+          Terdapat 7 Pos Rahasia yang terkunci. Pecahkan setiap teka-teki, analisis masalahnya, dan selesaikan seluruh misi hingga tuntas! Siapkan anggota squad terbaikmu!
+        </div>
+        <button class="btn-ml" onclick="navigate('screen-reg')">Ayo Daftarkan Anggota Investigasi</button>
+      </div>
+    </div>
+
+    <!-- ================= HALAMAN 2: REGISTRASI SQUAD & HERO ================= -->
+    <div id="screen-reg" class="screen">
+      <div class="reg-card">
+        <div class="reg-title">📋 PENDAFTARAN SQUAD INVESTIGASI</div>
+        
+        <div class="form-group">
+          <label>🏆 Nama Kelompok / Squad</label>
+          <input type="text" id="squadNameInput" placeholder="Contoh: Algo Legends VIP">
+        </div>
+
+        <div style="margin-bottom: 12px; font-weight: 700; font-size: 13px; color: var(--gold-light);">
+          👥 PILIH HERO UNTUK 5 ANGGOTA SQUAD:
+        </div>
+
+        <!-- Member 1 -->
+        <div class="member-box">
+          <div class="member-header">ANGGOTA 1 (KETUA SQUAD)</div>
+          <div class="member-grid">
+            <input type="text" id="m1_name" placeholder="Nama Anggota 1">
+            <select id="m1_hero">
+              <option value="🛡️ Tigreal (Tank)">🛡️ Tigreal (Tank)</option>
+              <option value="⚔️ Alucard (Fighter)">⚔️ Alucard (Fighter)</option>
+              <option value="🗡️ Gusion (Assassin)">🗡️ Gusion (Assassin)</option>
+              <option value="🪄 Eudora (Mage)">🪄 Eudora (Mage)</option>
+              <option value="🏹 Miya (Marksman)">🏹 Miya (Marksman)</option>
+              <option value="💖 Estes (Support)">💖 Estes (Support)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Member 2 -->
+        <div class="member-box">
+          <div class="member-header">ANGGOTA 2</div>
+          <div class="member-grid">
+            <input type="text" id="m2_name" placeholder="Nama Anggota 2">
+            <select id="m2_hero">
+              <option value="⚔️ Alucard (Fighter)">⚔️ Alucard (Fighter)</option>
+              <option value="🛡️ Tigreal (Tank)">🛡️ Tigreal (Tank)</option>
+              <option value="🗡️ Gusion (Assassin)">🗡️ Gusion (Assassin)</option>
+              <option value="🪄 Eudora (Mage)">🪄 Eudora (Mage)</option>
+              <option value="🏹 Miya (Marksman)">🏹 Miya (Marksman)</option>
+              <option value="💖 Estes (Support)">💖 Estes (Support)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Member 3 -->
+        <div class="member-box">
+          <div class="member-header">ANGGOTA 3</div>
+          <div class="member-grid">
+            <input type="text" id="m3_name" placeholder="Nama Anggota 3">
+            <select id="m3_hero">
+              <option value="🗡️ Gusion (Assassin)">🗡️ Gusion (Assassin)</option>
+              <option value="🛡️ Tigreal (Tank)">🛡️ Tigreal (Tank)</option>
+              <option value="⚔️ Alucard (Fighter)">⚔️ Alucard (Fighter)</option>
+              <option value="🪄 Eudora (Mage)">🪄 Eudora (Mage)</option>
+              <option value="🏹 Miya (Marksman)">🏹 Miya (Marksman)</option>
+              <option value="💖 Estes (Support)">💖 Estes (Support)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Member 4 -->
+        <div class="member-box">
+          <div class="member-header">ANGGOTA 4</div>
+          <div class="member-grid">
+            <input type="text" id="m4_name" placeholder="Nama Anggota 4">
+            <select id="m4_hero">
+              <option value="🪄 Eudora (Mage)">🪄 Eudora (Mage)</option>
+              <option value="🛡️ Tigreal (Tank)">🛡️ Tigreal (Tank)</option>
+              <option value="⚔️ Alucard (Fighter)">⚔️ Alucard (Fighter)</option>
+              <option value="🗡️ Gusion (Assassin)">🗡️ Gusion (Assassin)</option>
+              <option value="🏹 Miya (Marksman)">🏹 Miya (Marksman)</option>
+              <option value="💖 Estes (Support)">💖 Estes (Support)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Member 5 -->
+        <div class="member-box">
+          <div class="member-header">ANGGOTA 5</div>
+          <div class="member-grid">
+            <input type="text" id="m5_name" placeholder="Nama Anggota 5">
+            <select id="m5_hero">
+              <option value="🏹 Miya (Marksman)">🏹 Miya (Marksman)</option>
+              <option value="💖 Estes (Support)">💖 Estes (Support)</option>
+              <option value="🛡️ Tigreal (Tank)">🛡️ Tigreal (Tank)</option>
+              <option value="⚔️ Alucard (Fighter)">⚔️ Alucard (Fighter)</option>
+              <option value="🗡️ Gusion (Assassin)">🗡️ Gusion (Assassin)</option>
+              <option value="🪄 Eudora (Mage)">🪄 Eudora (Mage)</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-ml" onclick="startAdventure()" style="margin-top: 10px;">START PETUALANGAN 🚀</button>
+      </div>
+    </div>
+
+    <!-- ================= HALAMAN 3: PETA 7 POS ================= -->
+    <div id="screen-map" class="screen">
+      <div class="hero-team-list" id="heroBadgeList"></div>
+
+      <div class="map-container" id="mapGrid">
+        <!-- Generasi via JS -->
+      </div>
+
+      <button class="btn-ml btn-secondary" onclick="navigate('screen-summary')" style="margin-top: 10px;">📋 LIHAT RINGKASAN & DOWNLOAD PDF</button>
+    </div>
+
+    <!-- ================= HALAMAN 4: PERTANYAAN POS ================= -->
+    <div id="screen-pos" class="screen">
+      <div class="pos-detail-card">
+        <div class="pos-detail-header">
+          <h2 id="posTitle">Pos 1: Pengertian Algoritma</h2>
+        </div>
+
+        <div id="referenceContainer"></div>
+
+        <div id="questionsContainer">
+          <!-- Soal-soal disuntikkan secara dinamis setelah sandi dimasukkan -->
+        </div>
+
+        <button class="btn-ml" onclick="submitPosAnswers()" style="margin-top: 15px;">SELESAIKAN POS INI ⚔️</button>
+        <button class="btn-ml btn-secondary" onclick="navigate('screen-map')" style="margin-top: 10px;">KEMBALI KE PETA</button>
+      </div>
+    </div>
+
+    <!-- ================= HALAMAN 5: SUMMARY & DOWNLOAD PDF ================= -->
+    <div id="screen-summary" class="screen">
+      <div class="pos-detail-card">
+        <div class="pos-detail-header">
+          <h2>🏆 RINGKASAN MISI SQUAD</h2>
+        </div>
+
+        <!-- UCAPAN SUARA DARI GURU -->
+        <div id="teacherVoiceBanner" style="background: rgba(16, 185, 129, 0.15); border: 1px solid var(--green); border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: center;">
+          <p style="font-size: 13px; color: #6ee7b7; font-weight: 600; margin-bottom: 10px; line-height: 1.5;">
+            📢 <em>"Selamat telah menyelesaikan petualangan Algoritma ini para petualang hebat, silahkan download hasil kerja kalian dan kumpulkan ke Ibu Ema Humaera"</em>
+          </p>
+          <button class="btn-ml btn-secondary" onclick="speakCompletionMessage()" style="font-size: 12px; padding: 8px 16px; width: auto; margin: 0 auto; border-color: var(--green); color: #6ee7b7;">🔊 Dengar Pesan Suara Guru</button>
+        </div>
+
+        <p style="text-align: center; font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+          Seluruh data investigasi telah terkumpul. Klik tombol di bawah ini untuk mendownload lembar kerja dalam format PDF.
+        </p>
+        
+        <button class="btn-ml" onclick="downloadPDF()" style="margin-bottom: 12px;">📥 DOWNLOAD HASIL KERJA (PDF)</button>
+        <button class="btn-ml btn-secondary" onclick="navigate('screen-map')">KEMBALI KE PETA</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- POP-UP MODAL MASUKKAN SANDI POS -->
+  <div class="modal-overlay" id="passwordModal">
+    <div class="modal-box">
+      <h3 id="modalPosTitle">BUKA KUNCI POS</h3>
+      <p>Masukkan sandi rahasia dari guru untuk melihat soal investigasi pada pos ini:</p>
+      <input type="text" id="passwordInput" placeholder="SANDI" autocomplete="off">
+      <div class="modal-buttons">
+        <button class="btn-ml" onclick="verifyPassword()">BUKA</button>
+        <button class="btn-ml btn-secondary" onclick="closePasswordModal()">BATAL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POP-UP NOTIFIKASI UMUM (MENGGANTIKAN ALERT) -->
+  <div class="modal-overlay" id="noticeModal">
+    <div class="modal-box" style="border-color: var(--gold);">
+      <h3 id="noticeTitle" style="color: var(--gold-light);">PEMBERITAHUAN</h3>
+      <p id="noticeText" style="font-size: 13px; color: #e2e8f0; margin-bottom: 18px;"></p>
+      <button class="btn-ml" onclick="closeNoticeModal()">OK</button>
+    </div>
+  </div>
+
+  <!-- OVERLAY EFEK VICTORY -->
+  <div class="victory-overlay" id="victoryOverlay">
+    <div class="victory-banner">VICTORY!</div>
+    <div class="victory-sub" id="victorySubText">POS BERHASIL DISELESAIKAN</div>
+  </div>
+
+  <!-- OVERLAY ANTI-CHEAT DETEKSI KECURANGAN -->
+  <div class="cheat-overlay" id="cheatOverlay">
+    <h2>⚠️ KECURANGAN DETEKSI!</h2>
+    <p>
+      Sistem mendeteksi bahwa Anda mencoba pindah aplikasi, membuka tab browser lain, atau keluar dari layar game ini!
+      <br><br>
+      <strong>Mencari jawaban di internet dilarang selama Misi Investigasi berlangsung.</strong>
+    </p>
+    <button class="btn-ml" style="max-width: 250px;" onclick="dismissCheatWarning()">SAYA MENGERTI</button>
+  </div>
+
+  <!-- ELEMENT HIDDEN UNTUK PRINT PDF -->
+  <div id="printSection"></div>
+
+  <script>
+    /* ===== SANDI & DATA SOAL 7 POS ===== */
+    const POS_DATA = {
+      pos1: {
+        title: "Pos 1: Pengertian Algoritma",
+        pass: "CARISEQ1",
+        questions: [
+          { id: "p1_q1", text: "1. Apa yang dimaksud dengan algoritma?" },
+          { id: "p1_q2", text: "2. Apa tujuan dibuatnya algoritma?" },
+          { id: "p1_q3", text: "3. Mengapa langkah algoritma harus berurutan?" }
+        ]
+      },
+      pos2: {
+        title: "Pos 2: Ciri-Ciri Algoritma",
+        pass: "BINARY2",
+        questions: [
+          { id: "p2_q1", text: "1. Sebutkan lima ciri algoritma yang telah dipelajari." },
+          { id: "p2_q2", text: "2. Mengapa langkah algoritma harus jelas dan dapat dilaksanakan?" }
+        ]
+      },
+      pos3: {
+        title: "Pos 3: Representasi Algoritma",
+        pass: "BUBBLE3",
+        questions: [
+          { id: "p3_q1", text: "1. Apa yang dimaksud narasi algoritma?" },
+          { id: "p3_q2", text: "2. Apa yang dimaksud pseudocode?" },
+          { id: "p3_q3", text: "3. Apa yang dimaksud flowchart?" }
+        ]
+      },
+      pos4: {
+        title: "Pos 4: Misi Temukan Masalahmu",
+        pass: "INSERT4",
+        questions: [
+          { id: "p4_q1", text: "1) Tuliskan masalah/kegiatan yang dipilih dari kehidupan sehari-hari." },
+          { id: "p4_q2", text: "2) Jelaskan mengapa masalah tersebut terjadi atau perlu diselesaikan." },
+          { id: "p4_q3", text: "3) Tentukan tujuan penyelesaian masalah." },
+          { id: "p4_q4", text: "4) Tentukan solusi utama." },
+          { id: "p4_q5", text: "5) Tuliskan gambaran singkat langkah penyelesaian." },
+          { id: "p4_q6", text: "6) Tentukan Input dan Output." }
+        ]
+      },
+      pos5: {
+        title: "Pos 5: Misi Narasi Algoritma",
+        pass: "EFISIEN5",
+        showRef: true,
+        questions: [
+          { id: "p5_q1", text: "Susun solusi menjadi narasi algoritma yang runtut dari MULAI sampai SELESAI berdasarkan Pos 4:", isLarge: true }
+        ]
+      },
+      pos6: {
+        title: "Pos 6: Misi Pseudocode",
+        pass: "SINTESIS6",
+        showRef: true,
+        questions: [
+          { id: "p6_q1", text: "Ubah narasi algoritma dari Pos 5 menjadi struktur Pseudocode sederhana:", isLarge: true }
+        ]
+      },
+      pos7: {
+        title: "Pos 7: Misi Flowchart",
+        pass: "ALGO7",
+        showRef: true,
+        questions: [
+          { id: "p7_q1", text: "Tuliskan urutan simbol flowchart yang digunakan (dari Terminator Start hingga End) serta uraian isi di dalamnya berdasarkan Pseudocode Pos 6:", isLarge: true },
+          { id: "p7_img", text: "buat flowchart di selembar kertas yang disediakan, setelah itu foto dan masukkan filenya dibawah ini.", isFile: true }
+        ]
+      }
+    };
+
+    /* ===== STATE MANAGEMENT ===== */
+    let gameState = {
+      squadName: "",
+      members: [],
+      unlockedPosts: {},
+      completedPosts: {},
+      answers: {},
+      currentActivePosKey: null
+    };
+
+    const STORAGE_KEY = "ALGO_MLBB_GAME_STATE_V3";
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadGameState();
+      initAntiCheat();
+      if (gameState.squadName) {
+        updateGlobalHeader();
+        navigate('screen-map');
+        renderMap();
+      }
+    });
+
+    function saveGameState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(gameState));
+    }
+
+    function loadGameState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) gameState = JSON.parse(saved);
+      } catch (e) {
+        console.error("Gagal membaca storage", e);
+      }
+    }
+
+    function showNotice(title, text) {
+      document.getElementById('noticeTitle').textContent = title || "PERHATIAN";
+      document.getElementById('noticeText').textContent = text || "";
+      document.getElementById('noticeModal').classList.add('active');
+    }
+
+    function closeNoticeModal() {
+      document.getElementById('noticeModal').classList.remove('active');
+    }
+
+    function navigate(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Jika berpindah ke layar summary, mainkan pesan ucapan selamat
+      if (screenId === 'screen-summary') {
+        speakCompletionMessage();
+      }
+    }
+
+    function updateGlobalHeader() {
+      document.getElementById('globalHeader').style.display = 'block';
+      document.getElementById('squadBadgeName').textContent = `Squad: ${gameState.squadName}`;
+      
+      const badgeContainer = document.getElementById('heroBadgeList');
+      badgeContainer.innerHTML = '';
+      gameState.members.forEach(m => {
+        if (m.name) {
+          const tag = document.createElement('div');
+          tag.className = 'hero-tag';
+          tag.textContent = `${m.name} (${m.hero})`;
+          badgeContainer.appendChild(tag);
+        }
+      });
+    }
+
+    function startAdventure() {
+      const squad = document.getElementById('squadNameInput').value.trim();
+      if (!squad) {
+        showNotice("PERHATIAN", "Silakan isi Nama Squad/Kelompok terlebih dahulu!");
+        return;
+      }
+
+      let members = [];
+      for (let i = 1; i <= 5; i++) {
+        const name = document.getElementById(`m${i}_name`).value.trim();
+        const hero = document.getElementById(`m${i}_hero`).value;
+        if (!name) {
+          showNotice("PERHATIAN", `Nama Anggota ${i} belum diisi! Semua 5 anggota wajib terisi.`);
+          return;
+        }
+        members.push({ name, hero });
+      }
+
+      gameState.squadName = squad;
+      gameState.members = members;
+      saveGameState();
+
+      playVictoryAudio();
+      updateGlobalHeader();
+      renderMap();
+      navigate('screen-map');
+    }
+
+    function renderMap() {
+      const container = document.getElementById('mapGrid');
+      container.innerHTML = '';
+
+      Object.keys(POS_DATA).forEach((key, index) => {
+        const posNum = index + 1;
+        const isUnlocked = gameState.unlockedPosts[key];
+        const isCompleted = gameState.completedPosts[key];
+
+        const card = document.createElement('div');
+        let statusClass = 'locked';
+        let statusText = 'Terkunci (Sandi)';
+        let icon = '🔒';
+
+        if (isCompleted) {
+          statusClass = 'completed';
+          statusText = 'Selesai ✓';
+          icon = '⚔️';
+        } else if (isUnlocked) {
+          statusClass = 'unlocked';
+          statusText = 'Terbuka';
+          icon = '🔓';
+        }
+
+        card.className = `pos-card ${statusClass}`;
+        card.innerHTML = `
+          <span class="pos-icon">${icon}</span>
+          <div class="pos-name">POS ${posNum}</div>
+          <div class="pos-status status-${statusClass}">${statusText}</div>
+        `;
+
+        card.onclick = () => handlePosClick(key);
+        container.appendChild(card);
+      });
+    }
+
+    function handlePosClick(posKey) {
+      playClickAudio();
+      gameState.currentActivePosKey = posKey;
+
+      if (gameState.unlockedPosts[posKey]) {
+        openPosDetail(posKey);
+      } else {
+        document.getElementById('modalPosTitle').textContent = `BUKA POS ${posKey.replace('pos', '')}`;
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordModal').classList.add('active');
+        document.getElementById('passwordInput').focus();
+      }
+    }
+
+    function closePasswordModal() {
+      document.getElementById('passwordModal').classList.remove('active');
+    }
+
+    function verifyPassword() {
+      const inputPass = document.getElementById('passwordInput').value.trim().toUpperCase();
+      const currentKey = gameState.currentActivePosKey;
+      const correctPass = POS_DATA[currentKey].pass;
+
+      if (inputPass === correctPass) {
+        gameState.unlockedPosts[currentKey] = true;
+        saveGameState();
+        closePasswordModal();
+        playUnlockAudio();
+        renderMap();
+        openPosDetail(currentKey);
+      } else {
+        showNotice("KUNCI SALAH", "Sandi Pos Salah! Silakan tanyakan sandi rahasia kepada guru pendamping.");
+      }
+    }
+
+    function openPosDetail(posKey) {
+      const posData = POS_DATA[posKey];
+      document.getElementById('posTitle').textContent = posData.title;
+
+      const refBox = document.getElementById('referenceContainer');
+      refBox.innerHTML = '';
+      if (posData.showRef) {
+        refBox.innerHTML = `
+          <div class="reference-box">
+            📌 <strong>Catatan Misi:</strong> Kerjakan bagian ini berkesinambungan berdasarkan hasil analisis masalah dari pos sebelumnya.
+          </div>
+        `;
+      }
+
+      const qContainer = document.getElementById('questionsContainer');
+      qContainer.innerHTML = '';
+
+      posData.questions.forEach(q => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        const savedVal = gameState.answers[q.id] || '';
+        
+        if (q.isFile) {
+          const hasImage = (savedVal && savedVal.startsWith('data:image')) 
+            ? `<img src="${savedVal}" id="preview_${q.id}" style="max-width: 100%; max-height: 250px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--gold); display: block;" />` 
+            : `<img id="preview_${q.id}" style="max-width: 100%; max-height: 250px; margin-top: 10px; border-radius: 8px; border: 1px solid var(--gold); display: none;" />`;
+          
+          block.innerHTML = `
+            <label>${q.text}</label>
+            <input type="file" id="file_${q.id}" accept="image/jpeg, image/jpg, image/png" onchange="handleFileUpload(event, '${q.id}')" style="background: #0f172a; padding: 10px; border-radius: 8px; border: 1px solid #334155; width: 100%; color: white; cursor: pointer;">
+            <input type="hidden" id="input_${q.id}" value="${savedVal}">
+            ${hasImage}
+          `;
+        } else {
+          block.innerHTML = `
+            <label>${q.text}</label>
+            <textarea id="input_${q.id}" rows="${q.isLarge ? '6' : '3'}" placeholder="Ketik jawaban kamu di sini...">${savedVal}</textarea>
+          `;
+        }
+        qContainer.appendChild(block);
+      });
+
+      navigate('screen-pos');
+    }
+
+    function handleFileUpload(event, qId) {
+      const file = event.target.files[0];
+      if (file) {
+        if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+          showNotice('FORMAT DITOLAK', 'Silakan unggah file gambar berformat JPG atau PNG!');
+          event.target.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const dataUrl = e.target.result;
+          document.getElementById(`input_${qId}`).value = dataUrl;
+          const imgPreview = document.getElementById(`preview_${qId}`);
+          if (imgPreview) {
+            imgPreview.src = dataUrl;
+            imgPreview.style.display = 'block';
+          }
+          gameState.answers[qId] = dataUrl;
+          saveGameState();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function submitPosAnswers() {
+      const currentKey = gameState.currentActivePosKey;
+      const posData = POS_DATA[currentKey];
+
+      posData.questions.forEach(q => {
+        const inputElem = document.getElementById(`input_${q.id}`);
+        if (inputElem) {
+          gameState.answers[q.id] = inputElem.value.trim();
+        }
+      });
+
+      gameState.completedPosts[currentKey] = true;
+      saveGameState();
+
+      const overlay = document.getElementById('victoryOverlay');
+      document.getElementById('victorySubText').textContent = `BERHASIL MENYELESAIKAN ${posData.title.toUpperCase()}`;
+      overlay.style.display = 'flex';
+      playVictoryAudio();
+
+      if (currentKey === 'pos7') {
+        speakCompletionMessage();
+      }
+
+      setTimeout(() => {
+        overlay.style.display = 'none';
+        renderMap();
+        navigate('screen-map');
+      }, 2200);
+    }
+
+    function speakCompletionMessage() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const text = "Selamat telah menyelesaikan petualangan Algoritma ini para petualang hebat, silahkan download hasil kerja kalian dan kumpulkan ke Ibu Ema Humaera";
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'id-ID';
+        utterance.rate = 0.9;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playClickAudio() {
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(600, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.1, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    function playUnlockAudio() {
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.25);
+      } catch (e) {}
+    }
+
+    function playVictoryAudio() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'square';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.15, now + i * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.3);
+          osc.connect(gain); gain.connect(ctx.destination);
+          osc.start(now + i * 0.12);
+          osc.stop(now + i * 0.12 + 0.3);
+        });
+      } catch (e) {}
+    }
+
+    function initAntiCheat() {
+      document.addEventListener('contextmenu', e => e.preventDefault());
+
+      document.addEventListener('keydown', e => {
+        if (e.ctrlKey && (e.key === 'c' || e.key === 'v' || e.key === 'u' || e.key === 's' || e.key === 'p')) {
+          e.preventDefault();
+        }
+        if (e.key === 'F12') e.preventDefault();
+      });
+
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          document.getElementById('cheatOverlay').style.display = 'flex';
+        }
+      });
+    }
+
+    function dismissCheatWarning() {
+      document.getElementById('cheatOverlay').style.display = 'none';
+    }
+
+    function downloadPDF() {
+      const p = document.getElementById('printSection');
+      let html = `
+        <div class="print-header">
+          <h2>LEMBAR KERJA INVESTIGASI ALGORITMA</h2>
+          <p>Mata Pelajaran: Informatika Fase E</p>
+          <p><strong>Squad: ${gameState.squadName}</strong></p>
+        </div>
+        <div>
+          <p><strong>Anggota Squad & Hero:</strong></p>
+          <ul>
+      `;
+
+      gameState.members.forEach((m, i) => {
+        html += `<li>Anggota ${i+1}: ${m.name || '-'} (${m.hero})</li>`;
+      });
+
+      html += `</ul></div><hr style="margin: 15px 0;">`;
+
+      Object.keys(POS_DATA).forEach(key => {
+        const pos = POS_DATA[key];
+        html += `<h3 style="margin-top: 15px; background: #eee; padding: 4px;">${pos.title}</h3>`;
+        pos.questions.forEach(q => {
+          const ans = gameState.answers[q.id] || '(Tidak dijawab)';
+          if (q.isFile) {
+            html += `<div class="print-q">${q.text}</div>`;
+            if (ans && ans.startsWith('data:image')) {
+              html += `<div class="print-box" style="text-align: center;"><img src="${ans}" style="max-width: 100%; max-height: 400px; border-radius: 4px;" /></div>`;
+            } else {
+              html += `<div class="print-box">(Tidak ada foto diunggah)</div>`;
+            }
+          } else {
+            html += `
+              <div class="print-q">${q.text}</div>
+              <div class="print-box">${ans}</div>
+            `;
+          }
+        });
+      });
+
+      p.innerHTML = html;
+      window.print();
+    }
+  </script>
+</body>
+</html>
